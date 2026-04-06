@@ -47,7 +47,7 @@
    CREDENTIALS ADMIN (untuk tukar username/password admin):
    ───────────────────────────────────────────────────────────── */
 
-const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbzNeErxcRYCHd7N_sq-4kOgLP3OJPG5flgXYlsw8sZpmAamy2WcSWNrJ0kqy4-ZfkHZBg/exec'; // ← TAMPAL URL APPS SCRIPT AWAK DI SINI
+const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbwsTwYptemUW6M4Vup_bovyPHCLtpeUepYhr9tVB3dtJWVfxIWMMfpe34KaeFW02ot_gA/exec'; // ← TAMPAL URL APPS SCRIPT AWAK DI SINI
 
 const DEMO_STUDENTS = {
   'TM23001': '1234',    // ← Tukar/tambah akaun pelajar di sini
