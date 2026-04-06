@@ -38,12 +38,13 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
-     SCREEN: LOGIN (PELAJAR)
+     SCREEN: LOGIN
 ══════════════════════════════════════════════ -->
 <div id="screenLogin" class="screen active">
   <div class="container">
     <div class="login-outer">
       <div class="login-box">
+
         <div class="login-hero">
           <div class="login-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
@@ -55,12 +56,13 @@
           <p id="loginHeroSub">TVET MARA Lumut — Khusus Pelajar</p>
         </div>
 
+        <!-- Login Pelajar -->
         <div class="card" id="studentLoginCard">
           <div class="card-title" id="loginCardTitle" style="margin-bottom:16px;">Log Masuk Pelajar</div>
           <div id="loginAlert"></div>
           <div class="form-group">
-            <label class="form-label" id="lbMatric">No. Matrik</label>
-            <input class="form-input" type="text" id="inMatric" placeholder="Contoh: TM23001">
+            <label class="form-label" id="lbMatric">No. IC Pelajar</label>
+            <input class="form-input" type="text" id="inMatric" placeholder="Contoh: 050112345678" inputmode="numeric">
           </div>
           <div class="form-group">
             <label class="form-label" id="lbPass">Kata Laluan</label>
@@ -69,10 +71,13 @@
           <button class="btn btn-primary" onclick="doStudentLogin()" id="btnStudentLogin">Log Masuk</button>
           <button class="btn btn-secondary" onclick="showAdminLogin()" id="btnShowAdmin">Log Masuk Admin</button>
           <div style="margin-top:14px; padding:10px; background:var(--amber-50); border-radius:8px; border:1px solid #FAC775;">
-            <p style="font-size:11px; color:var(--amber-700); font-weight:600;" id="demoHint">Demo: TM23001 / 1234 &nbsp;|&nbsp; TM23002 / abcd &nbsp;|&nbsp; TM22005 / pass1</p>
+            <p style="font-size:11px; color:var(--amber-700); font-weight:600;">
+              Kata laluan pertama: <strong>tvetmara</strong> — anda akan dipaksa tukar selepas login.
+            </p>
           </div>
         </div>
 
+        <!-- Login Admin -->
         <div class="card" id="adminLoginCard" style="display:none;">
           <div class="card-title" id="adminCardTitle" style="margin-bottom:16px;">Log Masuk Admin</div>
           <div id="adminAlert"></div>
@@ -90,6 +95,45 @@
             <p style="font-size:11px; color:var(--amber-700); font-weight:600;" id="adminDemoHint">Demo: admin / admin123</p>
           </div>
         </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: TUKAR KATA LALUAN (FIRST LOGIN)
+══════════════════════════════════════════════ -->
+<div id="screenChangePass" class="screen">
+  <div class="container">
+    <div class="login-outer">
+      <div class="login-box">
+
+        <div class="login-hero" style="background: linear-gradient(135deg, var(--amber-700) 0%, #5a3800 100%);">
+          <div class="login-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" width="30" height="30">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h1 id="cpTitle" style="font-size:18px;">Tukar Kata Laluan</h1>
+          <p id="cpSubtitle" style="font-size:12px;">Sila tukar kata laluan lalai anda sebelum meneruskan.</p>
+          <p id="cpUserName" style="font-size:14px; font-weight:700; margin-top:6px;"></p>
+        </div>
+
+        <div class="card">
+          <div id="cpAlert"></div>
+          <div class="form-group">
+            <label class="form-label" id="lbNewPass">Kata Laluan Baru</label>
+            <input class="form-input" type="password" id="inNewPass" placeholder="Minimum 6 aksara">
+          </div>
+          <div class="form-group">
+            <label class="form-label" id="lbConfirmPass">Sahkan Kata Laluan</label>
+            <input class="form-input" type="password" id="inConfirmPass" placeholder="Taip semula kata laluan baru">
+          </div>
+          <button class="btn btn-primary" onclick="doChangePassword()" id="btnChangePass">Tukar & Teruskan</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -105,17 +149,17 @@
     <div class="step-bar" id="stepBar">
       <div class="step-node">
         <div class="step-circle active" id="sc1">1</div>
-        <div class="step-label active" id="sl1" data-ms="Court" data-en="Court">Court</div>
+        <div class="step-label active" id="sl1">Court</div>
       </div>
       <div class="step-line" id="sline1"></div>
       <div class="step-node">
         <div class="step-circle" id="sc2">2</div>
-        <div class="step-label" id="sl2" data-ms="Masa" data-en="Time">Masa</div>
+        <div class="step-label" id="sl2">Masa</div>
       </div>
       <div class="step-line" id="sline2"></div>
       <div class="step-node">
         <div class="step-circle" id="sc3">3</div>
-        <div class="step-label" id="sl3" data-ms="Sahkan" data-en="Confirm">Sahkan</div>
+        <div class="step-label" id="sl3">Sahkan</div>
       </div>
     </div>
 
@@ -170,27 +214,19 @@
           <span id="selectedCourtLabel" class="badge badge-active"></span>
         </div>
         <div id="s2Alert"></div>
-
         <div class="slot-section-label" id="lblAfternoon">Petang</div>
         <div class="slot-grid" id="slotGridAfternoon"></div>
-
         <div class="slot-section-label" id="lblNight">Malam</div>
         <div class="slot-grid" id="slotGridNight"></div>
-
         <div id="durationBox" style="display:none;">
           <div class="duration-section">
             <div class="duration-label" id="durationTitle">Pilih Tempoh Bermain</div>
             <div class="duration-grid">
-              <button class="duration-btn selected" id="btn1h" onclick="setDuration(1)">
-                1 <span id="hourLabel1">Jam</span>
-              </button>
-              <button class="duration-btn" id="btn2h" onclick="setDuration(2)">
-                2 <span id="hourLabel2">Jam</span>
-              </button>
+              <button class="duration-btn selected" id="btn1h" onclick="setDuration(1)">1 <span id="hourLabel1">Jam</span></button>
+              <button class="duration-btn" id="btn2h" onclick="setDuration(2)">2 <span id="hourLabel2">Jam</span></button>
             </div>
           </div>
         </div>
-
         <div class="divider"></div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary" style="width:auto;flex:1;" onclick="goToStep1()" id="btnStep2Back">← Kembali</button>
@@ -204,14 +240,11 @@
       <div class="card">
         <div class="card-title" id="s3Title">Sahkan Tempahan</div>
         <div id="s3Alert"></div>
-
         <div class="summary-highlight" id="summaryHighlight">
           <div class="summary-highlight-label" id="shLabel">Butiran Tempahan</div>
           <div class="summary-highlight-value" id="shValue">-</div>
         </div>
-
         <table class="summary-table" id="summaryTable"></table>
-
         <div class="divider"></div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary" style="width:auto;flex:1;" onclick="goToStep2()" id="btnStep3Back">← Kembali</button>
@@ -244,23 +277,17 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
-     SCREEN: HISTORY (inside student, shown via JS)
-══════════════════════════════════════════════ -->
-<div id="historyPanel" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;"></div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: SETUP
-══════════════════════════════════════════════ -->
-
-<!-- ══════════════════════════════════════════════
      SCREEN: ADMIN
 ══════════════════════════════════════════════ -->
 <div id="screenAdmin" class="screen">
   <div class="container container-padded">
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('dashboard')" id="adminTabDash">Dashboard</button>
-      <button class="admin-tab" onclick="switchAdminTab('bookings')" id="adminTabBook">Tempahan</button>
-      <button class="admin-tab" onclick="switchAdminTab('setup')" id="adminTabSetup">API</button>
+
+    <!-- Admin Tab Bar -->
+    <div class="admin-tabs" style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="admin-tab active" onclick="switchAdminTab('dashboard')" id="adminTabDash" style="flex:1;min-width:70px;">Dashboard</button>
+      <button class="admin-tab" onclick="switchAdminTab('bookings')" id="adminTabBook" style="flex:1;min-width:70px;">Tempahan</button>
+      <button class="admin-tab" onclick="switchAdminTab('students')" id="adminTabStudents" style="flex:1;min-width:70px;">Pelajar</button>
+      <button class="admin-tab" onclick="switchAdminTab('setup')" id="adminTabSetup" style="flex:1;min-width:50px;">API</button>
     </div>
 
     <!-- ADMIN: Dashboard -->
@@ -279,7 +306,7 @@
       </div>
     </div>
 
-    <!-- ADMIN: Bookings List -->
+    <!-- ADMIN: Senarai Tempahan -->
     <div id="adminBookings" style="display:none;">
       <div class="card">
         <div class="card-header">
@@ -296,7 +323,53 @@
       </div>
     </div>
 
-    <!-- ADMIN + STUDENT: Setup/API -->
+    <!-- ADMIN: Urus Pelajar -->
+    <div id="adminStudentsPanel" style="display:none;">
+
+      <!-- Senarai Pelajar -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title" id="studentsTitle">Senarai Pelajar</div>
+          <button class="btn-outline-sm" onclick="loadAdminStudents()">↻ Refresh</button>
+        </div>
+        <div id="studentListEl">
+          <div class="empty-state"><p>Klik Refresh untuk muatkan data.</p></div>
+        </div>
+      </div>
+
+      <!-- Tambah Pelajar Baru -->
+      <div class="card">
+        <div class="card-title" id="addStudentTitle" style="margin-bottom:14px;">Tambah Pelajar Baru</div>
+        <div id="addStudentAlert"></div>
+        <div class="form-group">
+          <label class="form-label" id="lbIC">No. IC</label>
+          <input class="form-input" type="text" id="inStudentIC" placeholder="Contoh: 050112345678" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="lbNama">Nama Penuh</label>
+          <input class="form-input" type="text" id="inStudentNama" placeholder="Nama penuh pelajar">
+        </div>
+        <button class="btn btn-primary" onclick="adminAddStudent()" id="btnSaveStudent">Simpan Pelajar</button>
+        <p style="font-size:11px;color:var(--gray-400);margin-top:8px;">Password default: <strong>tvetmara</strong> — pelajar wajib tukar semasa first login.</p>
+      </div>
+
+      <!-- Import CSV -->
+      <div class="card">
+        <div class="card-title" id="importTitle" style="margin-bottom:10px;">Import Pelajar (CSV)</div>
+        <div id="importAlert"></div>
+        <p style="font-size:12px;color:var(--gray-600);margin-bottom:10px;" id="importHint">
+          Format CSV: IC,Nama — satu pelajar sebaris.
+        </p>
+        <div class="code-block" style="font-size:11px;margin-bottom:10px;color:#9FE1CB;">050112345678,Ahmad Hafiz bin Abdullah
+040298765432,Siti Nadia binti Yusof
+030187654321,Muhd Zulkifli bin Ismail</div>
+        <textarea class="form-input" id="inImportCSV" rows="5" placeholder="050112345678,Ahmad Hafiz bin Abdullah&#10;040298765432,Siti Nadia binti Yusof" style="font-family:var(--mono);font-size:12px;resize:vertical;"></textarea>
+        <button class="btn btn-primary" onclick="adminImportStudents()" id="btnImport" style="margin-top:8px;">Import</button>
+      </div>
+
+    </div>
+
+    <!-- ADMIN: Setup API -->
     <div id="adminSetupPanel" style="display:none;">
       <div class="card">
         <div class="card-header">
@@ -312,7 +385,6 @@
           <button class="btn btn-secondary" onclick="testApi()" id="btnTestApi" style="flex:1;margin-top:0;">Test</button>
         </div>
       </div>
-
       <div class="card">
         <div class="card-header">
           <div class="card-title" id="setupGuideTitle">Cara Pasang Google Sheets</div>
@@ -324,96 +396,15 @@
         <div class="setup-step"><div class="setup-num">4</div><div class="setup-text" id="setupStep4">Tetapkan <strong>"Execute as: Me"</strong> dan <strong>"Who has access: Anyone"</strong> → klik Deploy</div></div>
         <div class="setup-step"><div class="setup-num">5</div><div class="setup-text" id="setupStep5">Salin URL deployment → tampal dalam kotak URL di atas → klik Simpan</div></div>
         <div style="margin-top:14px;">
-          <div style="font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:8px;" id="scriptLabel">KOD APPS SCRIPT:</div>
-          <div class="code-block" id="appsScriptCode">const SHEET_NAME = 'Bookings';
-
-function doGet(e) { return handleRequest(e); }
-function doPost(e) { return handleRequest(e); }
-
-function handleRequest(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow([
-      'ID', 'Matric', 'Name', 'Court',
-      'Date', 'Slot', 'Duration', 'Status', 'Timestamp'
-    ]);
-    sheet.getRange(1, 1, 1, 9).setFontWeight('bold');
-  }
-
-  let action = 'get';
-  let body = {};
-  try {
-    if (e.postData && e.postData.contents) {
-      body = JSON.parse(e.postData.contents);
-      action = body.action || 'get';
-    } else if (e.parameter && e.parameter.action) {
-      action = e.parameter.action;
-    }
-  } catch(err) {}
-
-  if (action === 'add') {
-    const id = 'BK' + Date.now();
-    sheet.appendRow([
-      id, body.matric, body.name || '', body.court,
-      body.date, body.slot, body.duration,
-      'Active', new Date().toLocaleString('ms-MY')
-    ]);
-    return output({ success: true, id: id });
-  }
-
-  if (action === 'get') {
-    const matric = e.parameter ? e.parameter.matric : '';
-    const rows = sheet.getDataRange().getValues();
-    if (rows.length <= 1) return output({ success: true, data: [] });
-    const headers = rows[0];
-    let data = rows.slice(1).map(r => {
-      let obj = {};
-      headers.forEach((h, i) => { obj[h] = r[i]; });
-      return obj;
-    });
-    if (matric) data = data.filter(d => d.Matric === matric);
-    return output({ success: true, data: data });
-  }
-
-  if (action === 'cancel') {
-    const rows = sheet.getDataRange().getValues();
-    for (let i = 1; i < rows.length; i++) {
-      if (rows[i][0] == body.id) {
-        sheet.getRange(i + 1, 8).setValue('Cancelled');
-        break;
-      }
-    }
-    return output({ success: true });
-  }
-
-  if (action === 'check') {
-    const rows = sheet.getDataRange().getValues();
-    if (rows.length <= 1) return output({ success: true, booked: [] });
-    const headers = rows[0];
-    const data = rows.slice(1).map(r => {
-      let obj = {};
-      headers.forEach((h, i) => { obj[h] = r[i]; });
-      return obj;
-    });
-    const booked = data
-      .filter(d => d.Court === e.parameter.court &&
-                   d.Date  === e.parameter.date  &&
-                   d.Status === 'Active')
-      .map(d => d.Slot);
-    return output({ success: true, booked: booked });
-  }
-
-  return output({ success: false, error: 'Unknown action' });
-}
-
-function output(data) {
-  const json = JSON.stringify(data);
-  return ContentService
-    .createTextOutput(json)
-    .setMimeType(ContentService.MimeType.JSON);
-}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:8px;" id="scriptLabel">KOD APPS SCRIPT (Code.gs):</div>
+          <div class="code-block" id="appsScriptCode" style="font-size:10px;">// Salin kod dari fail Code.gs yang disertakan bersama sistem ini.
+// Fail Code.gs mengandungi logik penuh untuk:
+//   - Pengesahan login pelajar (IC + password)
+//   - Tukar password (first login)
+//   - Import data pelajar dari admin
+//   - Pengurusan tempahan (add, get, cancel)
+//
+// Letakkan semua kandungan Code.gs dalam editor Apps Script.</div>
         </div>
       </div>
     </div>
@@ -430,6 +421,10 @@ function output(data) {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
       <span id="adminNavBookLabel">Tempahan</span>
     </button>
+    <button class="nav-item" onclick="switchAdminTab('students')" id="adminNavStudents">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span id="adminNavStudentsLabel">Pelajar</span>
+    </button>
     <button class="nav-item" onclick="switchAdminTab('setup')" id="adminNavSetup">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
       <span id="adminNavSetupLabel">API</span>
@@ -440,7 +435,6 @@ function output(data) {
     </button>
   </div>
 </div>
-
 
 <script src="app.js"></script>
 </body>
