@@ -47,7 +47,7 @@
    CREDENTIALS ADMIN (untuk tukar username/password admin):
    ───────────────────────────────────────────────────────────── */
 
-const FIXED_API_URL = ''; // ← TAMPAL URL APPS SCRIPT AWAK DI SINI
+const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbzNeErxcRYCHd7N_sq-4kOgLP3OJPG5flgXYlsw8sZpmAamy2WcSWNrJ0kqy4-ZfkHZBg/exec'; // ← TAMPAL URL APPS SCRIPT AWAK DI SINI
 
 const DEMO_STUDENTS = {
   'TM23001': '1234',    // ← Tukar/tambah akaun pelajar di sini
@@ -518,8 +518,7 @@ async function submitBooking() {
    // BETUL — Apps Script boleh parse tanpa header ni
 const res = await fetch(apiUrl, {
   method: 'POST',
-  body: JSON.stringify(payload),
-  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
 });
     const data = await res.json();
     if (data.success) {
