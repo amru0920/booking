@@ -27,7 +27,7 @@
    [CONFIG] KONFIGURASI UTAMA
    ⚠️  Tukar FIXED_API_URL dengan URL Apps Script baharu selepas deploy
    ───────────────────────────────────────── */
-const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbwsTwYptemUW6M4Vup_bovyPHCLtpeUepYhr9tVB3dtJWVfxIWMMfpe34KaeFW02ot_gA/exec';
+const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbz_UKUkDw6nOP0ZM2ZSNu94aGQccKBezIeQwzWz2fFHpmnj5eTWaClqy4ntDRSwi8kzvA/exec';
 
 const ADMIN_CRED = {
   user: 'admin',    // ← Tukar username admin
