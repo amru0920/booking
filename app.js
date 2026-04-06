@@ -515,11 +515,12 @@ async function submitBooking() {
   showAlert('s3Alert', t('saving'), 'info');
   try {
     // FIX: Content-Type header wajib ada supaya Apps Script parse JSON betul
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+   // BETUL — Apps Script boleh parse tanpa header ni
+const res = await fetch(apiUrl, {
+  method: 'POST',
+  body: JSON.stringify(payload),
+  headers: { 'Content-Type': 'application/json' },
+});
     const data = await res.json();
     if (data.success) {
       newBooking.ID = data.id || id;
