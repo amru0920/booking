@@ -36,11 +36,11 @@
 
    CREDENTIALS ADMIN — tukar di sini:
    ───────────────────────────────────────────────────────────── */
-const FIXED_API_URL = ''; // ← TAMPAL URL APPS SCRIPT AWAK DI SINI
+const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbytIerX40wUZhNdPSjB3PeZfdvRL4-4e9FmWVPuOAblhm2SvdNavHaYCBggfunuCYgJqQ/exec'; // ← TAMPAL URL APPS SCRIPT AWAK DI SINI
 
 const ADMIN_CRED = {
-  user: 'admin',     // ← Tukar username admin
-  pass: 'admin123'   // ← Tukar password admin
+  user: 'amru',     // ← Tukar username admin
+  pass: '12345'   // ← Tukar password admin
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -79,8 +79,8 @@ const LANG = {
     ttTitle:'Futsal TVET MARA', ttSub:'Lumut, Perak',
     loginHeroTitle:'Sistem Tempahan Court', loginHeroSub:'TVET MARA Lumut — Khusus Pelajar',
     loginCardTitle:'Log Masuk Pelajar',
-    lbMatric:'No. IC Pelajar', lbPass:'Kata Laluan',
-    inMatric:'Contoh: 050112345678', inPass:'Masukkan kata laluan',
+    lbMatric:'4 Digit Terakhir IC', lbPass:'Kata Laluan',
+    inMatric:'Contoh: 0283 (4 digit terakhir)', inPass:'Masukkan kata laluan',
     btnStudentLogin:'Log Masuk', btnShowAdmin:'Log Masuk Admin',
     adminCardTitle:'Log Masuk Admin', lbAdminUser:'Nama Pengguna', lbAdminPass:'Kata Laluan Admin',
     btnAdminLogin:'Log Masuk', btnBackLogin:'← Kembali',
@@ -101,7 +101,7 @@ const LANG = {
     btnStep2Back:'← Kembali', btnStep2Next:'Seterusnya →',
     s3Title:'Sahkan Tempahan', shLabel:'Butiran Tempahan',
     btnStep3Back:'← Kembali', btnSubmit:'Sahkan & Tempah',
-    navBookLabel:'Tempah', navHistoryLabel:'Sejarah', navSetupLabel:'Tetapan', navLogoutLabel:'Keluar',
+    navBookLabel:'Tempah', navHistoryLabel:'Sejarah', navJadualLabel:'Jadual', navSetupLabel:'Tetapan', navLogoutLabel:'Keluar',
     // Admin
     adminTabDash:'Dashboard', adminTabBook:'Tempahan', adminTabSetup:'API', adminTabStudents:'Pelajar',
     adminNavDashLabel:'Dashboard', adminNavBookLabel:'Tempahan', adminNavSetupLabel:'API', adminNavLogoutLabel:'Keluar',
@@ -162,8 +162,8 @@ const LANG = {
     ttTitle:'Futsal TVET MARA', ttSub:'Lumut, Perak',
     loginHeroTitle:'Court Booking System', loginHeroSub:'TVET MARA Lumut — Students Only',
     loginCardTitle:'Student Login',
-    lbMatric:'Student IC Number', lbPass:'Password',
-    inMatric:'Example: 050112345678', inPass:'Enter your password',
+    lbMatric:'Last 4 Digits of IC', lbPass:'Password',
+    inMatric:'Example: 0283 (last 4 digits)', inPass:'Enter your password',
     btnStudentLogin:'Login', btnShowAdmin:'Admin Login',
     adminCardTitle:'Admin Login', lbAdminUser:'Username', lbAdminPass:'Admin Password',
     btnAdminLogin:'Login', btnBackLogin:'← Back',
@@ -182,7 +182,7 @@ const LANG = {
     btnStep2Back:'← Back', btnStep2Next:'Next →',
     s3Title:'Confirm Booking', shLabel:'Booking Details',
     btnStep3Back:'← Back', btnSubmit:'Confirm & Book',
-    navBookLabel:'Book', navHistoryLabel:'History', navSetupLabel:'Settings', navLogoutLabel:'Logout',
+    navBookLabel:'Book', navHistoryLabel:'History', navJadualLabel:'Schedule', navSetupLabel:'Settings', navLogoutLabel:'Logout',
     adminTabDash:'Dashboard', adminTabBook:'Bookings', adminTabSetup:'API', adminTabStudents:'Students',
     adminNavDashLabel:'Dashboard', adminNavBookLabel:'Bookings', adminNavSetupLabel:'API', adminNavLogoutLabel:'Logout',
     stLblTotal:'Total', stLblActive:'Active', stLblCancelled:'Cancelled',
@@ -334,15 +334,20 @@ function hideAdminLogin() {
 }
 
 async function doStudentLogin() {
-  const ic   = document.getElementById('inMatric').value.trim();
-  const pass = document.getElementById('inPass').value.trim();
+  const icInput = document.getElementById('inMatric').value.trim();
+  const pass    = document.getElementById('inPass').value.trim();
   clearAlert('loginAlert');
 
-  if (!ic || !pass) { showAlert('loginAlert', t('errorFill')); return; }
+  if (!icInput || !pass) { showAlert('loginAlert', t('errorFill')); return; }
+
+  // Ambil 4 digit terakhir sahaja (fix leading zero & senang ingat)
+  const last4 = icInput.replace(/\D/g, '').slice(-4);
+  if (last4.length < 4) {
+    showAlert('loginAlert', lang === 'ms' ? 'Masukkan sekurang-kurangnya 4 digit.' : 'Enter at least 4 digits.', 'warning');
+    return;
+  }
 
   const apiUrl = getApiUrl();
-
-  // Kalau tiada API URL — tak boleh login (kena setup dulu)
   if (!apiUrl) {
     showAlert('loginAlert', 'URL API belum dikonfigurasi. Hubungi admin.', 'warning');
     return;
@@ -351,7 +356,7 @@ async function doStudentLogin() {
   showAlert('loginAlert', t('loading'), 'info');
 
   try {
-    const res  = await fetch(`${apiUrl}?action=getStudent&ic=${encodeURIComponent(ic)}&pass=${encodeURIComponent(pass)}`);
+    const res  = await fetch(`${apiUrl}?action=getStudent&last4=${encodeURIComponent(last4)}&pass=${encodeURIComponent(pass)}`);
     const data = await res.json();
 
     if (!data.success) {
@@ -672,8 +677,10 @@ function resetBookingForm() {
    ───────────────────────────────────────────────────────────── */
 function showStudentTab(tab) {
   currentStudentTab = tab;
-  ['book','history','setup'].forEach(tb => {
-    document.getElementById('nav' + tb.charAt(0).toUpperCase() + tb.slice(1)).classList.toggle('active', tb === tab);
+  ['book','history','jadual','setup'].forEach(tb => {
+    const navId = 'nav' + tb.charAt(0).toUpperCase() + tb.slice(1);
+    const el = document.getElementById(navId);
+    if (el) el.classList.toggle('active', tb === tab);
   });
 
   const show = (id, vis) => { const el = document.getElementById(id); if(el) el.style.display = vis ? (id === 'stepBar' ? 'flex' : 'block') : 'none'; };
@@ -683,9 +690,11 @@ function showStudentTab(tab) {
   show('step2Div',   false);
   show('step3Div',   false);
   show('historyCard',tab === 'history');
+  show('jadualCard', tab === 'jadual');
   show('setupCard',  tab === 'setup');
 
   if (tab === 'history') renderStudentHistory();
+  if (tab === 'jadual')  renderJadual();
   if (tab === 'setup') {
     const savedUrl = getApiUrl();
     const el = document.getElementById('inApiUrlStudent');
@@ -1049,6 +1058,26 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>`;
   container.appendChild(historyCard);
 
+  // Jadual card
+  const jadualCard = document.createElement('div');
+  jadualCard.id = 'jadualCard';
+  jadualCard.style.display = 'none';
+  jadualCard.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" id="navJadualLabel">Jadual Court</div>
+        <button class="btn-outline-sm" onclick="loadJadual()">↻</button>
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <input class="form-input" type="date" id="jadualDate" onchange="renderJadual()">
+      </div>
+      <div id="jadualContentEl"></div>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:12px;text-align:center;">
+        Jadual dikemaskini setiap kali anda buka tab ini.
+      </p>
+    </div>`;
+  container.appendChild(jadualCard);
+
   // Setup card (student)
   const setupCard = document.createElement('div');
   setupCard.id = 'setupCard';
@@ -1072,6 +1101,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const today  = new Date().toISOString().split('T')[0];
   const dateEl = document.getElementById('inDate');
   if (dateEl) { dateEl.min = today; dateEl.value = today; }
+  // Set jadual date default
+  const jadualDateEl = document.getElementById('jadualDate');
+  if (jadualDateEl) { jadualDateEl.value = today; }
 
   // Sync API URL ke input kalau dah ada
   const savedUrl = getApiUrl();
