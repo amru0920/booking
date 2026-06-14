@@ -1,445 +1,258 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Tempahan Court Futsal — TVET MARA Lumut</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Court Booking — TVET MARA Lumut</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="app">
 
-<!-- ══════════════════════════════════════════════
-     TOPBAR
-══════════════════════════════════════════════ -->
-<div class="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-logo" onclick="adminTapCount()" style="cursor:pointer;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" width="18" height="18">
-        <circle cx="12" cy="12" r="9"/>
-        <path d="M12 3a15 15 0 0 1 0 18M3 12a15 15 0 0 1 18 0"/>
-      </svg>
+  <!-- ═══════════ LOGIN ═══════════ -->
+  <section id="screenLogin" class="screen active">
+    <div class="login-hero">
+      <div class="court-circle"></div>
+      <div class="lang-toggle hero-lang">
+        <button class="lang-opt" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-opt" data-lang="ms" onclick="setLang('ms')">BM</button>
+      </div>
+      <div class="login-logo" onclick="adminTapCount()">TM</div>
+      <h1 data-i18n="appName">Court Booking</h1>
+      <p data-i18n="heroSub">TVET MARA Lumut — students only</p>
     </div>
-    <div>
-      <div class="topbar-title" id="ttTitle">Futsal TVET MARA</div>
-      <div class="topbar-sub" id="ttSub">Lumut, Perak</div>
-    </div>
-  </div>
-  <div class="topbar-right">
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('ms')" id="btnLangMs">BM</button>
-      <button class="lang-btn" onclick="setLang('en')" id="btnLangEn">EN</button>
-    </div>
-    <div class="user-chip" id="userChip" style="display:none;">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <span id="userChipName"></span>
-    </div>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════════
-     SCREEN: LOGIN
-══════════════════════════════════════════════ -->
-<div id="screenLogin" class="screen active">
-  <div class="container">
-    <div class="login-outer">
-      <div class="login-box">
+    <div class="login-body">
+      <!-- Student login -->
+      <div id="studentLoginCard" class="card">
+        <div id="loginAlert"></div>
 
-        <div class="login-hero">
-          <div class="login-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 3a15 15 0 0 1 0 18M3 12a15 15 0 0 1 18 0"/>
-            </svg>
+        <div id="loginEmailStep">
+          <div class="card-title" data-i18n="loginTitle">Log in</div>
+          <div class="card-sub" data-i18n="loginSub">Enter your student email to continue.</div>
+          <div class="form-group">
+            <label class="form-label" for="inEmail" data-i18n="lblEmail">Student email</label>
+            <input class="form-input" type="email" id="inEmail" data-i18n-ph="phEmail" autocomplete="username">
           </div>
-          <h1 id="loginHeroTitle">Sistem Tempahan Court</h1>
-          <p id="loginHeroSub">TVET MARA Lumut — Khusus Pelajar</p>
+          <button class="btn btn-primary" onclick="checkEmail()" data-i18n="btnContinue">Continue</button>
         </div>
 
-        <!-- Login Pelajar -->
-        <div class="card" id="studentLoginCard">
-          <div class="card-title" id="loginCardTitle" style="margin-bottom:16px;">Log Masuk Pelajar</div>
-          <div id="loginAlert"></div>
+        <div id="loginPasswordStep" style="display:none;">
+          <div class="card-title" data-i18n="passTitle">Password</div>
+          <div class="welcome-line" id="loginWelcomePass"></div>
           <div class="form-group">
-            <label class="form-label" id="lbMatric">No. IC Pelajar</label>
-            <input class="form-input" type="text" id="inMatric" placeholder="Contoh: 0283 (4 digit terakhir IC)" inputmode="numeric">
+            <label class="form-label" for="inPass" data-i18n="lblPass">Password</label>
+            <input class="form-input" type="password" id="inPass" data-i18n-ph="phPass" autocomplete="current-password">
           </div>
-          <div class="form-group">
-            <label class="form-label" id="lbPass">Kata Laluan</label>
-            <input class="form-input" type="password" id="inPass" placeholder="Masukkan kata laluan">
-          </div>
-          <button class="btn btn-primary" onclick="doStudentLogin()" id="btnStudentLogin">Log Masuk</button>
-          <button class="btn btn-secondary" onclick="showAdminLogin()" id="btnShowAdmin" style="display:none;">Log Masuk Admin</button>
-          <div style="margin-top:14px; padding:10px; background:var(--amber-50); border-radius:8px; border:1px solid #FAC775;">
-            <p style="font-size:11px; color:var(--amber-700); font-weight:600;">
-              Log masuk guna <strong>4 digit terakhir IC</strong> anda. Kata laluan pertama: <strong>tvetmara</strong>
-            </p>
+          <button class="btn btn-primary" onclick="doLogin()" data-i18n="btnLogin">Log in</button>
+          <div class="btn-row" style="margin-top:12px;justify-content:space-between;">
+            <button class="btn-link" onclick="resetLoginForm()" data-i18n="btnChangeEmail">← Change email</button>
+            <button class="btn-link" onclick="contactAdminWhatsApp()" data-i18n="btnForgot">Forgot password?</button>
           </div>
         </div>
 
-        <!-- Login Admin -->
-        <div class="card" id="adminLoginCard" style="display:none;">
-          <div class="card-title" id="adminCardTitle" style="margin-bottom:16px;">Log Masuk Admin</div>
-          <div id="adminAlert"></div>
+        <div id="loginIcStep" style="display:none;">
+          <div class="card-title" data-i18n="firstTitle">First-time login</div>
+          <div class="welcome-line" id="loginWelcomeIc"></div>
           <div class="form-group">
-            <label class="form-label" id="lbAdminUser">Nama Pengguna</label>
-            <input class="form-input" type="text" id="inAdminUser" placeholder="admin">
+            <label class="form-label" for="inIc" data-i18n="lblIc">Last 4 digits of IC</label>
+            <input class="form-input" type="text" inputmode="numeric" maxlength="4" id="inIc" data-i18n-ph="phIc">
           </div>
           <div class="form-group">
-            <label class="form-label" id="lbAdminPass">Kata Laluan Admin</label>
-            <input class="form-input" type="password" id="inAdminPass" placeholder="••••••">
+            <label class="form-label" for="inFirstPass" data-i18n="lblNewPass">New password</label>
+            <input class="form-input" type="password" id="inFirstPass" data-i18n-ph="phNewPass">
           </div>
-          <button class="btn btn-primary" onclick="doAdminLogin()" id="btnAdminLogin">Log Masuk</button>
-          <button class="btn btn-secondary" onclick="hideAdminLogin()" id="btnBackLogin">← Kembali</button>
-          <div style="margin-top:14px; padding:10px; background:var(--amber-50); border-radius:8px; border:1px solid #FAC775;">
-            <p style="font-size:11px; color:var(--amber-700); font-weight:600;" id="adminDemoHint">Demo: admin / admin123</p>
+          <div class="form-group">
+            <label class="form-label" for="inFirstPassConfirm" data-i18n="lblConfirmPass">Confirm password</label>
+            <input class="form-input" type="password" id="inFirstPassConfirm" data-i18n-ph="phConfirmPass">
+          </div>
+          <button class="btn btn-primary" onclick="doFirstLogin()" data-i18n="btnSetContinue">Set & continue</button>
+          <div class="btn-row" style="margin-top:12px;">
+            <button class="btn-link" onclick="resetLoginForm()" data-i18n="btnChangeEmail">← Change email</button>
           </div>
         </div>
-
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════════
-     SCREEN: TUKAR KATA LALUAN (FIRST LOGIN)
-══════════════════════════════════════════════ -->
-<div id="screenChangePass" class="screen">
-  <div class="container">
-    <div class="login-outer">
-      <div class="login-box">
-
-        <div class="login-hero" style="background: linear-gradient(135deg, var(--amber-700) 0%, #5a3800 100%);">
-          <div class="login-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" width="30" height="30">
-              <rect x="3" y="11" width="18" height="11" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </div>
-          <h1 id="cpTitle" style="font-size:18px;">Tukar Kata Laluan</h1>
-          <p id="cpSubtitle" style="font-size:12px;">Sila tukar kata laluan lalai anda sebelum meneruskan.</p>
-          <p id="cpUserName" style="font-size:14px; font-weight:700; margin-top:6px;"></p>
-        </div>
-
-        <div class="card">
-          <div id="cpAlert"></div>
-          <div class="form-group">
-            <label class="form-label" id="lbNewPass">Kata Laluan Baru</label>
-            <input class="form-input" type="password" id="inNewPass" placeholder="Minimum 6 aksara">
-          </div>
-          <div class="form-group">
-            <label class="form-label" id="lbConfirmPass">Sahkan Kata Laluan</label>
-            <input class="form-input" type="password" id="inConfirmPass" placeholder="Taip semula kata laluan baru">
-          </div>
-          <button class="btn btn-primary" onclick="doChangePassword()" id="btnChangePass">Tukar & Teruskan</button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: PELAJAR — BOOKING
-══════════════════════════════════════════════ -->
-<div id="screenStudent" class="screen">
-  <div class="container container-padded">
-
-    <!-- Step Bar -->
-    <div class="step-bar" id="stepBar">
-      <div class="step-node">
-        <div class="step-circle active" id="sc1">1</div>
-        <div class="step-label active" id="sl1">Court</div>
-      </div>
-      <div class="step-line" id="sline1"></div>
-      <div class="step-node">
-        <div class="step-circle" id="sc2">2</div>
-        <div class="step-label" id="sl2">Masa</div>
-      </div>
-      <div class="step-line" id="sline2"></div>
-      <div class="step-node">
-        <div class="step-circle" id="sc3">3</div>
-        <div class="step-label" id="sl3">Sahkan</div>
-      </div>
-    </div>
-
-    <!-- STEP 1: Pilih Court + Tarikh -->
-    <div id="step1Div">
-      <div class="card">
-        <div class="card-title" id="s1Title">Pilih Court & Tarikh</div>
-        <div id="s1Alert"></div>
-        <div class="court-grid">
-          <div class="court-card" id="courtCardA" onclick="selectCourt('A')">
-            <svg class="court-svg" viewBox="0 0 160 90">
-              <rect x="4" y="4" width="152" height="82" rx="6" fill="#E1F5EE" stroke="#1D9E75" stroke-width="2"/>
-              <line x1="80" y1="4" x2="80" y2="86" stroke="#1D9E75" stroke-width="1.5" stroke-dasharray="5,4"/>
-              <circle cx="80" cy="45" r="13" fill="none" stroke="#1D9E75" stroke-width="1.5"/>
-              <rect x="4" y="27" width="16" height="32" rx="3" fill="#9FE1CB"/>
-              <rect x="140" y="27" width="16" height="32" rx="3" fill="#9FE1CB"/>
-              <line x1="4" y1="45" x2="20" y2="45" stroke="#0F6E56" stroke-width="1"/>
-              <line x1="140" y1="45" x2="156" y2="45" stroke="#0F6E56" stroke-width="1"/>
-              <text x="80" y="20" text-anchor="middle" fill="#085041" font-size="9" font-weight="700" font-family="sans-serif">COURT A</text>
-            </svg>
-            <div class="court-name" id="cAName">Court A</div>
-            <div class="court-badge" id="cABadge">MELINTANG</div>
-          </div>
-          <div class="court-card" id="courtCardB" onclick="selectCourt('B')">
-            <svg class="court-svg" viewBox="0 0 160 90">
-              <rect x="44" y="4" width="72" height="82" rx="6" fill="#E6F1FB" stroke="#378ADD" stroke-width="2"/>
-              <line x1="44" y1="45" x2="116" y2="45" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="5,4"/>
-              <circle cx="80" cy="45" r="11" fill="none" stroke="#378ADD" stroke-width="1.5"/>
-              <rect x="58" y="4" width="44" height="14" rx="3" fill="#B5D4F4"/>
-              <rect x="58" y="72" width="44" height="14" rx="3" fill="#B5D4F4"/>
-              <line x1="80" y1="4" x2="80" y2="18" stroke="#185FA5" stroke-width="1"/>
-              <line x1="80" y1="72" x2="80" y2="86" stroke="#185FA5" stroke-width="1"/>
-              <text x="80" y="38" text-anchor="middle" fill="#185FA5" font-size="9" font-weight="700" font-family="sans-serif">COURT B</text>
-            </svg>
-            <div class="court-name" id="cBName">Court B</div>
-            <div class="court-badge" id="cBBadge">MENEGAK</div>
-          </div>
+      <!-- Admin login -->
+      <div id="adminLoginCard" class="card" style="display:none;">
+        <div id="adminLoginAlert"></div>
+        <div class="card-title" data-i18n="adminTitle">Admin login</div>
+        <div class="card-sub" data-i18n="adminSub">Administrators only.</div>
+        <div class="form-group">
+          <label class="form-label" for="inAdminUser" data-i18n="lblAdminUser">Username</label>
+          <input class="form-input" type="text" id="inAdminUser" data-i18n-ph="phAdminUser">
         </div>
         <div class="form-group">
-          <label class="form-label" id="lbDate">Tarikh</label>
-          <input class="form-input" type="date" id="inDate">
+          <label class="form-label" for="inAdminPass" data-i18n="lblAdminPass">Admin password</label>
+          <input class="form-input" type="password" id="inAdminPass" data-i18n-ph="phAdminPass">
         </div>
-        <button class="btn btn-primary" onclick="goToStep2()" id="btnStep1Next">Seterusnya →</button>
+        <button class="btn btn-primary" onclick="doAdminLogin()" data-i18n="btnAdminLogin">Log in</button>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-link" onclick="hideAdminLogin()" data-i18n="btnBack">← Back</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ STUDENT ═══════════ -->
+  <section id="screenStudent" class="screen">
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="mark">TM</div>
+        <div class="name" data-i18n="appName">Court Booking</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="lang-toggle">
+          <button class="lang-opt" data-lang="en" onclick="setLang('en')">EN</button>
+          <button class="lang-opt" data-lang="ms" onclick="setLang('ms')">BM</button>
+        </div>
+        <div id="userChip" class="user-chip">
+          <div class="avatar" id="userAvatar">A</div>
+          <div class="chip-name" id="userChipName">Student</div>
+        </div>
       </div>
     </div>
 
-    <!-- STEP 2: Pilih Slot Masa -->
-    <div id="step2Div" style="display:none;">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title" id="s2Title">Pilih Slot Masa</div>
-          <span id="selectedCourtLabel" class="badge badge-active"></span>
+    <div class="content">
+      <div id="stepBar" class="step-bar">
+        <div class="step-node"><div class="step-circle" id="sc1">1</div><div class="step-label" id="sl1" data-i18n="stepSelect">Select</div></div>
+        <div class="step-line" id="sline1"></div>
+        <div class="step-node"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2" data-i18n="stepSlot">Slot</div></div>
+        <div class="step-line" id="sline2"></div>
+        <div class="step-node"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3" data-i18n="stepConfirm">Confirm</div></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div id="step1Div">
+        <div id="s1Alert"></div>
+        <div class="card">
+          <div class="section-label" data-i18n="secSport">1. Select sport</div>
+          <div class="card-grid" id="sportGrid"></div>
+          <div id="courtSelectionDiv" style="display:none;">
+            <div class="section-label" data-i18n="secCourt">2. Select court</div>
+            <div class="card-grid" id="courtGrid"></div>
+          </div>
+          <div class="section-label" data-i18n="secDate">3. Select date</div>
+          <div class="form-group"><input class="form-input" type="date" id="inDate"></div>
+          <button class="btn btn-primary" onclick="goToStep2()" data-i18n="btnNext">Next</button>
         </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="step2Div" style="display:none;">
         <div id="s2Alert"></div>
-        <div class="slot-section-label" id="lblAfternoon">Petang</div>
-        <div class="slot-grid" id="slotGridAfternoon"></div>
-        <div class="slot-section-label" id="lblNight">Malam</div>
-        <div class="slot-grid" id="slotGridNight"></div>
-        <div id="durationBox" style="display:none;">
-          <div class="duration-section">
-            <div class="duration-label" id="durationTitle">Pilih Tempoh Bermain</div>
-            <div class="duration-grid">
-              <button class="duration-btn selected" id="btn1h" onclick="setDuration(1)">1 <span id="hourLabel1">Jam</span></button>
-              <button class="duration-btn" id="btn2h" onclick="setDuration(2)">2 <span id="hourLabel2">Jam</span></button>
-            </div>
+        <div class="card">
+          <div class="card-sub" id="selectedCourtLabel" style="font-weight:600;color:var(--ink);"></div>
+          <div class="section-label" data-i18n="lblAfternoon">Afternoon</div>
+          <div class="slot-grid" id="slotGridAfternoon"></div>
+          <div class="section-label" data-i18n="lblNight">Night</div>
+          <div class="slot-grid" id="slotGridNight"></div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="goToStep1()" style="flex:1;" data-i18n="btnBackShort">← Back</button>
+            <button class="btn btn-primary" onclick="goToStep3()" style="flex:2;" data-i18n="btnNext">Next</button>
           </div>
         </div>
-        <div class="divider"></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-secondary" style="width:auto;flex:1;" onclick="goToStep1()" id="btnStep2Back">← Kembali</button>
-          <button class="btn btn-primary" style="flex:2;" onclick="goToStep3()" id="btnStep2Next">Seterusnya →</button>
-        </div>
       </div>
-    </div>
 
-    <!-- STEP 3: Sahkan Tempahan -->
-    <div id="step3Div" style="display:none;">
-      <div class="card">
-        <div class="card-title" id="s3Title">Sahkan Tempahan</div>
+      <!-- Step 3 -->
+      <div id="step3Div" style="display:none;">
         <div id="s3Alert"></div>
-        <div class="summary-highlight" id="summaryHighlight">
-          <div class="summary-highlight-label" id="shLabel">Butiran Tempahan</div>
-          <div class="summary-highlight-value" id="shValue">-</div>
+        <div class="card">
+          <div class="summary-head" id="shValue"></div>
+          <table class="summary-table"><tbody id="summaryTable"></tbody></table>
+          <div class="btn-row" style="margin-top:18px;">
+            <button class="btn btn-secondary" onclick="goToStep2()" style="flex:1;" data-i18n="btnBackShort">← Back</button>
+            <button class="btn btn-primary" onclick="submitBooking()" style="flex:2;" data-i18n="btnConfirmBooking">Confirm booking</button>
+          </div>
         </div>
-        <table class="summary-table" id="summaryTable"></table>
-        <div class="divider"></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-secondary" style="width:auto;flex:1;" onclick="goToStep2()" id="btnStep3Back">← Kembali</button>
-          <button class="btn btn-primary" style="flex:2;" onclick="submitBooking()" id="btnSubmit">Sahkan & Tempah</button>
+      </div>
+
+      <!-- Schedule -->
+      <div id="scheduleCard" style="display:none;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:4px;" data-i18n="schedTitle">Court schedule</div>
+          <div class="card-sub" data-i18n="schedSub">See which slots are free before booking.</div>
+          <div class="form-group"><input class="form-input" type="date" id="scheduleDate" onchange="loadSchedule()"></div>
+          <div class="sched-legend">
+            <span><i class="lg free"></i> <span data-i18n="legendFree">Free</span></span>
+            <span><i class="lg taken"></i> <span data-i18n="legendTaken">Booked</span></span>
+          </div>
+          <div id="scheduleGrid"></div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div id="historyCard" style="display:none;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;" data-i18n="myBookings">My bookings</div>
+          <div id="historyListEl"></div>
         </div>
       </div>
     </div>
 
-  </div>
+    <nav class="bottom-nav">
+      <button class="nav-item active" id="navBook" onclick="showStudentTab('book')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span data-i18n="navBook">Book</span>
+      </button>
+      <button class="nav-item" id="navJadual" onclick="showStudentTab('jadual')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+        <span data-i18n="navSchedule">Schedule</span>
+      </button>
+      <button class="nav-item" id="navHistory" onclick="showStudentTab('history')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+        <span data-i18n="navHistory">History</span>
+      </button>
+      <button class="nav-item danger" onclick="doLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span data-i18n="navLogout">Log out</span>
+      </button>
+    </nav>
+  </section>
 
-  <!-- Bottom Nav (Student) -->
-  <div class="bottom-nav" id="studentNav">
-    <button class="nav-item active" onclick="showStudentTab('book')" id="navBook">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      <span id="navBookLabel">Tempah</span>
-    </button>
-    <button class="nav-item" onclick="showStudentTab('history')" id="navHistory">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
-      <span id="navHistoryLabel">Sejarah</span>
-    </button>
-    <button class="nav-item" onclick="showStudentTab('jadual')" id="navJadual">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
-      <span id="navJadualLabel">Jadual</span>
-    </button>
-    <button class="nav-item" onclick="showStudentTab('setup')" id="navSetup">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-      <span id="navSetupLabel">Tetapan</span>
-    </button>
-    <button class="nav-item logout-btn" onclick="doLogout()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-      <span id="navLogoutLabel">Keluar</span>
-    </button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     SCREEN: ADMIN
-══════════════════════════════════════════════ -->
-<div id="screenAdmin" class="screen">
-  <div class="container container-padded">
-
-    <!-- Admin Tab Bar -->
-    <div class="admin-tabs" style="display:flex;gap:6px;flex-wrap:wrap;">
-      <button class="admin-tab active" onclick="switchAdminTab('dashboard')" id="adminTabDash" style="flex:1;min-width:70px;">Dashboard</button>
-      <button class="admin-tab" onclick="switchAdminTab('bookings')" id="adminTabBook" style="flex:1;min-width:70px;">Tempahan</button>
-      <button class="admin-tab" onclick="switchAdminTab('students')" id="adminTabStudents" style="flex:1;min-width:70px;">Pelajar</button>
-      <button class="admin-tab" onclick="switchAdminTab('setup')" id="adminTabSetup" style="flex:1;min-width:50px;">API</button>
+  <!-- ═══════════ ADMIN ═══════════ -->
+  <section id="screenAdmin" class="screen">
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="mark" style="background:var(--green-600);">AD</div>
+        <div class="name" data-i18n="adminPanel">Admin Panel</div>
+      </div>
+      <div class="lang-toggle">
+        <button class="lang-opt" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-opt" data-lang="ms" onclick="setLang('ms')">BM</button>
+      </div>
     </div>
 
-    <!-- ADMIN: Dashboard -->
-    <div id="adminDashboard">
+    <div class="content">
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl" id="stLblTotal">Jumlah</div></div>
-        <div class="stat-card"><div class="stat-num green" id="statActive">0</div><div class="stat-lbl" id="stLblActive">Aktif</div></div>
-        <div class="stat-card"><div class="stat-num red" id="statCancelled">0</div><div class="stat-lbl" id="stLblCancelled">Dibatal</div></div>
+        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl" data-i18n="statTotal">Total</div></div>
+        <div class="stat-card"><div class="stat-num" id="statActive">0</div><div class="stat-lbl" data-i18n="statActive">Active</div></div>
+        <div class="stat-card"><div class="stat-num" id="statCancelled">0</div><div class="stat-lbl" data-i18n="statCancelled">Cancelled</div></div>
       </div>
+
       <div class="card">
         <div class="card-header">
-          <div class="card-title" id="recentTitle">Tempahan Terkini</div>
-          <button class="btn-outline-sm" onclick="loadAdminData()" id="btnRefresh">Muat Semula</button>
+          <div class="card-title" data-i18n="recentTitle">Recent bookings</div>
+          <button class="btn-outline-sm" onclick="loadAdminData()" data-i18n="btnRefresh">↻ Refresh</button>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <input class="form-input" type="text" id="adminFilter" data-i18n-ph="filterPh" oninput="setAdminFilter(this.value)">
         </div>
         <div id="adminRecentList"></div>
       </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;" data-i18n="resetTitle">Reset student password</div>
+        <div class="card-sub" data-i18n="resetSub">Enter the student's email to reset their password.</div>
+        <div class="form-group"><input class="form-input" type="email" id="inResetEmail" data-i18n-ph="phResetEmail"></div>
+        <button class="btn btn-secondary" onclick="adminResetPassword(document.getElementById('inResetEmail').value.trim())" data-i18n="btnReset">Reset password</button>
+      </div>
+
+      <button class="btn btn-ghost" onclick="doLogout()" style="margin-top:8px;" data-i18n="btnAdminLogout">Log out admin</button>
     </div>
+  </section>
 
-    <!-- ADMIN: Senarai Tempahan -->
-    <div id="adminBookings" style="display:none;">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title" id="allBookingsTitle">Semua Tempahan</div>
-        </div>
-        <div class="filter-row">
-          <button class="filter-tab active" onclick="filterBookings('all')" id="ftAll">Semua</button>
-          <button class="filter-tab" onclick="filterBookings('Active')" id="ftActive">Aktif</button>
-          <button class="filter-tab" onclick="filterBookings('Cancelled')" id="ftCancelled">Dibatal</button>
-          <button class="filter-tab" onclick="filterBookings('A')" id="ftCourtA">Court A</button>
-          <button class="filter-tab" onclick="filterBookings('B')" id="ftCourtB">Court B</button>
-        </div>
-        <div id="adminBookingsFull"></div>
-      </div>
-    </div>
-
-    <!-- ADMIN: Urus Pelajar -->
-    <div id="adminStudentsPanel" style="display:none;">
-
-      <!-- Senarai Pelajar -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title" id="studentsTitle">Senarai Pelajar</div>
-          <button class="btn-outline-sm" onclick="loadAdminStudents()">↻ Refresh</button>
-        </div>
-        <div id="studentListEl">
-          <div class="empty-state"><p>Klik Refresh untuk muatkan data.</p></div>
-        </div>
-      </div>
-
-      <!-- Tambah Pelajar Baru -->
-      <div class="card">
-        <div class="card-title" id="addStudentTitle" style="margin-bottom:14px;">Tambah Pelajar Baru</div>
-        <div id="addStudentAlert"></div>
-        <div class="form-group">
-          <label class="form-label" id="lbIC">No. IC</label>
-          <input class="form-input" type="text" id="inStudentIC" placeholder="Contoh: 0283 (4 digit terakhir IC)" inputmode="numeric">
-        </div>
-        <div class="form-group">
-          <label class="form-label" id="lbNama">Nama Penuh</label>
-          <input class="form-input" type="text" id="inStudentNama" placeholder="Nama penuh pelajar">
-        </div>
-        <button class="btn btn-primary" onclick="adminAddStudent()" id="btnSaveStudent">Simpan Pelajar</button>
-        <p style="font-size:11px;color:var(--gray-400);margin-top:8px;">Password default: <strong>tvetmara</strong> — pelajar wajib tukar semasa first login.</p>
-      </div>
-
-      <!-- Import CSV -->
-      <div class="card">
-        <div class="card-title" id="importTitle" style="margin-bottom:10px;">Import Pelajar (CSV)</div>
-        <div id="importAlert"></div>
-        <p style="font-size:12px;color:var(--gray-600);margin-bottom:10px;" id="importHint">
-          Format CSV: IC,Nama — satu pelajar sebaris.
-        </p>
-        <div class="code-block" style="font-size:11px;margin-bottom:10px;color:#9FE1CB;">050112345678,Ahmad Hafiz bin Abdullah
-040298765432,Siti Nadia binti Yusof
-030187654321,Muhd Zulkifli bin Ismail</div>
-        <textarea class="form-input" id="inImportCSV" rows="5" placeholder="050112345678,Ahmad Hafiz bin Abdullah&#10;040298765432,Siti Nadia binti Yusof" style="font-family:var(--mono);font-size:12px;resize:vertical;"></textarea>
-        <button class="btn btn-primary" onclick="adminImportStudents()" id="btnImport" style="margin-top:8px;">Import</button>
-      </div>
-
-    </div>
-
-    <!-- ADMIN: Setup API -->
-    <div id="adminSetupPanel" style="display:none;">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title" id="apiTitle">Sambungan Google Sheets</div>
-        </div>
-        <div id="apiAlert"></div>
-        <div class="form-group">
-          <label class="form-label" id="lbApiUrl">URL Apps Script Deployment</label>
-          <input class="form-input" type="text" id="inApiUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-primary" onclick="saveApiUrl()" id="btnSaveApi" style="flex:2;">Simpan URL</button>
-          <button class="btn btn-secondary" onclick="testApi()" id="btnTestApi" style="flex:1;margin-top:0;">Test</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title" id="setupGuideTitle">Cara Pasang Google Sheets</div>
-          <button class="copy-btn" onclick="copyScript()" id="btnCopyScript">Salin Kod</button>
-        </div>
-        <div class="setup-step"><div class="setup-num">1</div><div class="setup-text" id="setupStep1">Buka Google Sheets baru → klik <strong>Extensions</strong> → <strong>Apps Script</strong></div></div>
-        <div class="setup-step"><div class="setup-num">2</div><div class="setup-text" id="setupStep2">Padam semua kod sedia ada → tampal kod di bawah → klik <strong>Save</strong></div></div>
-        <div class="setup-step"><div class="setup-num">3</div><div class="setup-text" id="setupStep3">Klik <strong>Deploy</strong> → <strong>New Deployment</strong> → pilih jenis <strong>Web App</strong></div></div>
-        <div class="setup-step"><div class="setup-num">4</div><div class="setup-text" id="setupStep4">Tetapkan <strong>"Execute as: Me"</strong> dan <strong>"Who has access: Anyone"</strong> → klik Deploy</div></div>
-        <div class="setup-step"><div class="setup-num">5</div><div class="setup-text" id="setupStep5">Salin URL deployment → tampal dalam kotak URL di atas → klik Simpan</div></div>
-        <div style="margin-top:14px;">
-          <div style="font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:8px;" id="scriptLabel">KOD APPS SCRIPT (Code.gs):</div>
-          <div class="code-block" id="appsScriptCode" style="font-size:10px;">// Salin kod dari fail Code.gs yang disertakan bersama sistem ini.
-// Fail Code.gs mengandungi logik penuh untuk:
-//   - Pengesahan login pelajar (IC + password)
-//   - Tukar password (first login)
-//   - Import data pelajar dari admin
-//   - Pengurusan tempahan (add, get, cancel)
-//
-// Letakkan semua kandungan Code.gs dalam editor Apps Script.</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Bottom Nav (Admin) -->
-  <div class="bottom-nav">
-    <button class="nav-item active" onclick="switchAdminTab('dashboard')" id="adminNavDash">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span id="adminNavDashLabel">Dashboard</span>
-    </button>
-    <button class="nav-item" onclick="switchAdminTab('bookings')" id="adminNavBook">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
-      <span id="adminNavBookLabel">Tempahan</span>
-    </button>
-    <button class="nav-item" onclick="switchAdminTab('students')" id="adminNavStudents">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span id="adminNavStudentsLabel">Pelajar</span>
-    </button>
-    <button class="nav-item" onclick="switchAdminTab('setup')" id="adminNavSetup">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
-      <span id="adminNavSetupLabel">API</span>
-    </button>
-    <button class="nav-item logout-btn" onclick="doLogout()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-      <span id="adminNavLogoutLabel">Keluar</span>
-    </button>
-  </div>
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
