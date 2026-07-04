@@ -37,7 +37,7 @@ function slotLabel(id) { return SLOT_LABEL[lang][id]; }
 
 const LANG = {
   en: {
-    appName:'Court Booking', heroSub:'TVET MARA Lumut — students only',
+    appName:'Court Booking', heroBadge:'Court Booking System', heroTitle:'Book Your Court', tagline:'Safe • Fast • Free', heroSub:'TVET MARA Lumut — For students only',
     loginTitle:'Log in', loginSub:'Enter your student email to continue.',
     lblEmail:'Student email', phEmail:'2402080.dfd@lumut.ikm.edu.my',
     btnContinue:'Continue',
@@ -88,7 +88,7 @@ const LANG = {
     adminCancelConfirm:'Cancel this student\'s booking?'
   },
   ms: {
-    appName:'Tempahan Court', heroSub:'TVET MARA Lumut — khusus pelajar',
+    appName:'Tempahan Court', heroBadge:'Sistem Tempahan Court', heroTitle:'Tempah Court Anda', tagline:'Selamat • Pantas • Percuma', heroSub:'TVET MARA Lumut — khusus pelajar',
     loginTitle:'Log masuk', loginSub:'Masukkan email pelajar anda untuk teruskan.',
     lblEmail:'Email pelajar', phEmail:'2402080.dfd@lumut.ikm.edu.my',
     btnContinue:'Teruskan',
