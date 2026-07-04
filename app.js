@@ -153,6 +153,9 @@ function applyLang() {
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   // Toggle highlight
   document.querySelectorAll('.lang-opt').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  // Mark body ready — removes FOUC hide
+  document.body.classList.add('lang-ready');
   // Dynamic re-renders
   if (document.getElementById('sportGrid')) renderSportSelection();
   if (selectedSport && document.getElementById('courtSelectionDiv') &&
