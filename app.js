@@ -39,7 +39,7 @@ const LANG = {
   en: {
     appName:'Court Booking', heroSub:'TVET MARA Lumut — students only',
     loginTitle:'Log in', loginSub:'Enter your student email to continue.',
-    lblEmail:'Student email', phEmail:'2402080.dfd@lumut.ikm.edu.my',
+    lblEmail:'Student email', phEmail:'2402080.dfd@lumut.tvetmara.edu.my',
     btnContinue:'Continue',
     passTitle:'Password', lblPass:'Password', phPass:'Enter your password',
     btnLogin:'Log in', btnChangeEmail:'← Change email', btnForgot:'Forgot password?',
@@ -90,7 +90,7 @@ const LANG = {
   ms: {
     appName:'Tempahan Court', heroSub:'TVET MARA Lumut — khusus pelajar',
     loginTitle:'Log masuk', loginSub:'Masukkan email pelajar anda untuk teruskan.',
-    lblEmail:'Email pelajar', phEmail:'2402080.dfd@lumut.ikm.edu.my',
+    lblEmail:'Email pelajar', phEmail:'2402080.dfd@lumut.tvetmara.edu.my',
     btnContinue:'Teruskan',
     passTitle:'Kata laluan', lblPass:'Kata laluan', phPass:'Masukkan kata laluan',
     btnLogin:'Log masuk', btnChangeEmail:'← Tukar email', btnForgot:'Lupa kata laluan?',
