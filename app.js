@@ -37,7 +37,7 @@ function slotLabel(id) { return SLOT_LABEL[lang][id]; }
 
 const LANG = {
   en: {
-    appName:'Court Booking', heroSub:'TVET MARA Lumut — students only',
+    appName:'Court Booking', heroBadge:'Court Booking System', heroTitle:'Book Your Court', tagline:'Safe • Fast • Free', heroSub:'TVET MARA Lumut — For students only',
     loginTitle:'Log in', loginSub:'Enter your student email to continue.',
     lblEmail:'Student email', phEmail:'2402080.dfd@lumut.ikm.edu.my',
     btnContinue:'Continue',
@@ -88,7 +88,7 @@ const LANG = {
     adminCancelConfirm:'Cancel this student\'s booking?'
   },
   ms: {
-    appName:'Tempahan Court', heroSub:'TVET MARA Lumut — khusus pelajar',
+    appName:'Tempahan Court', heroBadge:'Sistem Tempahan Court', heroTitle:'Tempah Court Anda', tagline:'Selamat • Pantas • Percuma', heroSub:'TVET MARA Lumut — khusus pelajar',
     loginTitle:'Log masuk', loginSub:'Masukkan email pelajar anda untuk teruskan.',
     lblEmail:'Email pelajar', phEmail:'2402080.dfd@lumut.ikm.edu.my',
     btnContinue:'Teruskan',
@@ -228,15 +228,17 @@ async function checkEmail() {
 
 /* ───────── [AUTH] first login ───────── */
 async function doFirstLogin() {
+  const ic = document.getElementById('inIc').value.trim();
   const newPass = document.getElementById('inFirstPass').value;
   const confirmPass = document.getElementById('inFirstPassConfirm').value;
   clearAlert('loginAlert');
+  if (!ic) { showAlert('loginAlert', t('aEnterIc'), 'warning'); return; }
   if (newPass.length < 6) { showAlert('loginAlert', t('aPassMin'), 'warning'); return; }
   if (newPass !== confirmPass) { showAlert('loginAlert', t('aPassMismatch'), 'warning'); return; }
 
   showAlert('loginAlert', t('aSaving'), 'info');
   try {
-    const data = await callApi({ action:'firstLogin', email:currentEmail, newPassword:newPass });
+    const data = await callApi({ action:'firstLogin', email:currentEmail, ic, newPassword:newPass });
     if (data.success) enterStudentApp(data.student.nama);
     else showAlert('loginAlert', data.error || t('bookFail'));
   } catch(e) { showAlert('loginAlert', t('aServerFail')); }
