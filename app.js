@@ -221,7 +221,7 @@ async function checkEmail() {
         ? `Hi <strong>${data.nama}</strong>, verify your identity & set your password.`
         : `Hai <strong>${data.nama}</strong>, sahkan identiti & tetapkan kata laluan anda.`;
       document.getElementById('loginIcStep').style.display = 'block';
-      document.getElementById('inIc').focus();
+      const fp = document.getElementById('inFirstPass'); if (fp) fp.focus();
     }
   } catch(e) { showAlert('loginAlert', t('aServerFail')); }
 }
