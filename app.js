@@ -10,8 +10,17 @@ const ADMIN_WA = '60195772706';
 const SLOTS = [
   { id: 1, type: 'petang', time: '5:00pm – 7:00pm' },
   { id: 2, type: 'malam',  time: '8:00pm – 9:30pm' },
-  { id: 3, type: 'malam',  time: '9:30pm – 11:00pm' }
+  { id: 3, type: 'malam',  time: '9:30pm – 11:00pm' },
+  { id: 4, type: 'malam',  time: '9:00pm – 11:00pm' }
 ];
+
+// Isnin–Khamis (1-4): 1 slot malam (id 4). Jumaat/Sabtu/Ahad (5,6,0): kekal 2 slot malam (id 2 & 3).
+function getSlotsForDate(dateStr) {
+  if (!dateStr) return SLOTS;
+  const day = new Date(dateStr + 'T00:00:00').getDay(); // 0=Ahad,1=Isnin,...,6=Sabtu
+  const isWeekday = day >= 1 && day <= 4;
+  return SLOTS.filter(s => isWeekday ? (s.id !== 2 && s.id !== 3) : s.id !== 4);
+}
 
 const COURTS = [
   { id: 1, name: 'Court 1', sports: ['futsal','netball','handball'] },
@@ -30,8 +39,8 @@ const SPORT_LABEL = {
 function sportLabel(key) { return (SPORT_LABEL[lang] && SPORT_LABEL[lang][key]) || key; }
 
 const SLOT_LABEL = {
-  en: { 1:'Afternoon', 2:'Night 1', 3:'Night 2' },
-  ms: { 1:'Petang',    2:'Malam 1', 3:'Malam 2' }
+  en: { 1:'Afternoon', 2:'Night 1', 3:'Night 2', 4:'Night' },
+  ms: { 1:'Petang',    2:'Malam 1', 3:'Malam 2', 4:'Malam' }
 };
 function slotLabel(id) { return SLOT_LABEL[lang][id]; }
 
@@ -414,8 +423,9 @@ function goToStep3() {
 function renderSlots() {
   const pg=document.getElementById('slotGridAfternoon'), ng=document.getElementById('slotGridNight');
   if(!pg||!ng) return; pg.innerHTML=''; ng.innerHTML='';
-  SLOTS.forEach(s=>{
-    const isBooked=bookedSlots.some(b=>b.court_id===selectedCourtId&&b.slot_id===s.id);
+  const date=document.getElementById('inDate').value;
+  getSlotsForDate(date).forEach(s=>{
+    const isBooked=isSlotBooked(selectedCourtId, s.id);
     const btn=document.createElement('button');
     btn.className='slot-btn'+(isBooked?' booked':'')+(selectedSlotId===s.id?' selected':'');
     btn.disabled=isBooked;
@@ -423,6 +433,18 @@ function renderSlots() {
     if(!isBooked) btn.onclick=()=>selectSlot(s.id);
     (s.type==='petang'?pg:ng).appendChild(btn);
   });
+}
+// Slot 4 (Isnin-Khamis, 9-11pm) overlap dengan booking lama slot 2 (8-9:30pm) & slot 3 (9:30-11pm).
+// Kalau ada booking lama guna slot 2/3 untuk court+tarikh yang sama, anggap slot 4 pun "booked"
+// supaya tak clash sekali gus tak perlu cancel booking lama yang masih dalam waktu (slot 3).
+function isSlotBooked(courtId, slotId, list) {
+  const arr = list || bookedSlots;
+  const direct = arr.some(b => b.court_id === courtId && b.slot_id === slotId);
+  if (direct) return true;
+  if (slotId === 4) {
+    return arr.some(b => b.court_id === courtId && (b.slot_id === 2 || b.slot_id === 3));
+  }
+  return false;
 }
 function selectSlot(id){ selectedSlotId=id; renderSlots(); }
 
@@ -486,13 +508,16 @@ async function loadSchedule() {
 }
 function renderSchedule(date,booked) {
   const grid=document.getElementById('scheduleGrid');
-  let h='<div class="sched-table"><div class="sched-row sched-head"><div class="sched-court"></div>';
-  SLOTS.forEach(s=>{ h+=`<div class="sched-cell-head">${slotLabel(s.id)}<span>${s.time}</span></div>`; });
+  const slots=getSlotsForDate(date);
+  const cols=`80px repeat(${slots.length},1fr)`;
+  let h=`<div class="sched-table"><div class="sched-row sched-head" style="grid-template-columns:${cols}"><div class="sched-court"></div>`;
+  slots.forEach(s=>{ h+=`<div class="sched-cell-head">${slotLabel(s.id)}<span>${s.time}</span></div>`; });
   h+='</div>';
   COURTS.forEach(c=>{
-    h+=`<div class="sched-row"><div class="sched-court"><strong>${c.name}</strong><span>${c.sports.map(x=>sportLabel(x)).join(' · ')}</span></div>`;
-    SLOTS.forEach(s=>{
-      const b=booked.find(x=>x.court_id===c.id&&x.slot_id===s.id);
+    h+=`<div class="sched-row" style="grid-template-columns:${cols}"><div class="sched-court"><strong>${c.name}</strong><span>${c.sports.map(x=>sportLabel(x)).join(' · ')}</span></div>`;
+    slots.forEach(s=>{
+      const b=booked.find(x=>x.court_id===c.id&&x.slot_id===s.id) ||
+               (s.id===4 ? booked.find(x=>x.court_id===c.id&&(x.slot_id===2||x.slot_id===3)) : null);
       if(b) h+=`<div class="sched-cell taken">${sportLabel(b.sport)}</div>`;
       else  h+=`<div class="sched-cell free" onclick="planFromSchedule('${date}',${c.id})">${t('free')}</div>`;
     });
