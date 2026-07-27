@@ -229,6 +229,13 @@
 
     @media(min-width:500px) { .app { box-shadow:0 0 60px rgba(0,0,0,.1); } }
 
+    /* ── ADMIN: full-width on laptop/desktop so the bookings table doesn't need horizontal scroll ── */
+    @media (min-width:900px) {
+      .app:has(#screenAdmin.active) { max-width:100%; box-shadow:none; }
+      .app:has(#screenAdmin.active) .card-wrap { max-width:1100px; margin:-24px auto 0; }
+      .app:has(#screenAdmin.active) .topbar { padding-left:calc((100% - 1100px) / 2 + 18px); padding-right:calc((100% - 1100px) / 2 + 18px); }
+    }
+
     /* Prevent FOUC — hide i18n elements until applyLang runs */
     [data-i18n]:not([data-i18n-ready]) { opacity: 0; }
     body.lang-ready [data-i18n] { opacity: 1; transition: opacity .1s; }
