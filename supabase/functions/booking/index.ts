@@ -253,6 +253,42 @@ Deno.serve(async (req) => {
       }
 
       // --------------------------------------------------
+      // adminAddStudent — daftar email pelajar baru (allowlist)
+      // --------------------------------------------------
+      case "adminAddStudent": {
+        if (body.adminUser !== Deno.env.get("ADMIN_USER") ||
+            body.adminPass !== Deno.env.get("ADMIN_PASS"))
+          return json({ success: false, error: "Akses admin ditolak." }, 403);
+
+        const email = cleanEmail(body.email);
+        if (!email.endsWith(ALLOWED_DOMAIN))
+          return json({ success: false, error: `Email mesti guna domain ${ALLOWED_DOMAIN}.` });
+
+        const nama = (body.nama || "").trim();
+        if (!nama) return json({ success: false, error: "Nama diperlukan." });
+
+        if (!body.password || body.password.length < DEFAULT_MIN_PASS)
+          return json({ success: false, error: `Kata laluan minimum ${DEFAULT_MIN_PASS} aksara.` });
+
+        // matric & kursus diambil terus dari format email: <matric>.<kursus>@domain
+        const [matric, kursus] = email.split("@")[0].split(".");
+        const password_hash = await hashPassword(body.password);
+
+        const { data, error } = await supabase
+          .from("students")
+          .insert({ email, nama, ic: "", matric: matric || null, kursus: kursus || null, password_hash })
+          .select()
+          .single();
+
+        if (error) {
+          if (error.code === "23505")
+            return json({ success: false, error: "Email ini sudah didaftarkan." });
+          return json({ success: false, error: "Gagal daftar pelajar." });
+        }
+        return json({ success: true, student: data });
+      }
+
+      // --------------------------------------------------
       // adminReset — reset password student → NULL (first-login balik)
       // --------------------------------------------------
       case "adminReset": {

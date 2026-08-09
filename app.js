@@ -71,6 +71,12 @@ const LANG = {
     legendFree:'Free', legendTaken:'Booked',
     adminPanel:'Admin Panel', statTotal:'Total', statActive:'Active', statCancelled:'Cancelled',
     recentTitle:'Recent bookings', btnRefresh:'↻ Refresh',
+    addStudentTitle:'Register student', addStudentSub:'Add a new student email so they can log in and book courts.',
+    lblStudentName:'Full name', phStudentName:'e.g. Ahmad Bin Ali',
+    lblSetPassword:'Set password', phSetPassword:'Minimum 6 characters (tell the student this password)',
+    btnAddStudent:'Register student', aEnterName:'Please enter the student\'s name.',
+    aRegistering:'Registering...', studentAdded:'Student registered! They can now log in with this password.',
+    addStudentFail:'Failed to register student.',
     resetTitle:'Reset student password',
     resetSub:'When a student messages you about a forgotten password, enter their email here to reset it.',
     phResetEmail:'student email', btnReset:'Reset password', btnAdminLogout:'Log out admin',
@@ -122,6 +128,12 @@ const LANG = {
     legendFree:'Kosong', legendTaken:'Dah ditempah',
     adminPanel:'Panel Admin', statTotal:'Jumlah', statActive:'Aktif', statCancelled:'Dibatal',
     recentTitle:'Tempahan terkini', btnRefresh:'↻ Muat semula',
+    addStudentTitle:'Daftar pelajar', addStudentSub:'Tambah email pelajar baru supaya mereka boleh log masuk dan tempah court.',
+    lblStudentName:'Nama penuh', phStudentName:'cth: Ahmad Bin Ali',
+    lblSetPassword:'Tetapkan kata laluan', phSetPassword:'Minimum 6 aksara (beritahu pelajar kata laluan ini)',
+    btnAddStudent:'Daftar pelajar', aEnterName:'Sila masukkan nama pelajar.',
+    aRegistering:'Mendaftar...', studentAdded:'Pelajar berjaya didaftar! Mereka boleh log masuk dengan kata laluan ini.',
+    addStudentFail:'Gagal mendaftar pelajar.',
     resetTitle:'Reset kata laluan pelajar',
     resetSub:'Bila pelajar WhatsApp untuk lupa kata laluan, masukkan email mereka di sini untuk reset.',
     phResetEmail:'email pelajar', btnReset:'Reset kata laluan', btnAdminLogout:'Log keluar admin',
@@ -638,6 +650,30 @@ async function adminCancelBooking(id) {
     if(data.success){ await loadAdminData(); }
     else alert(data.error||t('cancelFail'));
   } catch(e){ alert(t('aServerFail')); }
+}
+
+async function adminAddStudent() {
+  const email    = document.getElementById('inNewEmail').value.trim().toLowerCase();
+  const nama     = document.getElementById('inNewName').value.trim();
+  const password = document.getElementById('inNewPassword').value;
+  clearAlert('addStudentAlert');
+  if (!email) { showAlert('addStudentAlert', t('aEnterEmail'), 'warning'); return; }
+  if (!nama)  { showAlert('addStudentAlert', t('aEnterName'), 'warning'); return; }
+  if (password.length < 6) { showAlert('addStudentAlert', t('aPassMin'), 'warning'); return; }
+
+  const u=document.getElementById('inAdminUser')?.value, p=document.getElementById('inAdminPass')?.value;
+  showAlert('addStudentAlert', t('aRegistering'), 'info');
+  try {
+    const data = await callApi({ action:'adminAddStudent', adminUser:u, adminPass:p, email, nama, password });
+    if (data.success) {
+      showAlert('addStudentAlert', t('studentAdded'), 'success');
+      document.getElementById('inNewEmail').value='';
+      document.getElementById('inNewName').value='';
+      document.getElementById('inNewPassword').value='';
+    } else {
+      showAlert('addStudentAlert', data.error || t('addStudentFail'));
+    }
+  } catch(e) { showAlert('addStudentAlert', t('aServerFail')); }
 }
 
 async function adminResetPassword(email) {

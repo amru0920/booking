@@ -478,6 +478,24 @@
         <div id="adminRecentList"></div>
       </div>
       <div class="card">
+        <div class="card-title" style="margin-bottom:10px;" data-i18n="addStudentTitle">Register Student</div>
+        <div class="card-sub" data-i18n="addStudentSub">Add a new student email so they can log in and book courts.</div>
+        <div id="addStudentAlert"></div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblEmail">Student Email</label>
+          <input class="form-input" type="email" id="inNewEmail" data-i18n-ph="phEmail" placeholder="2402080.dfd@lumut.tvetmara.edu.my">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblStudentName">Full Name</label>
+          <input class="form-input" type="text" id="inNewName" data-i18n-ph="phStudentName" placeholder="e.g. Ahmad Bin Ali">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblSetPassword">Set Password</label>
+          <input class="form-input" type="text" id="inNewPassword" data-i18n-ph="phSetPassword" placeholder="Minimum 6 characters">
+        </div>
+        <button class="btn btn-primary" onclick="adminAddStudent()" data-i18n="btnAddStudent">Register Student</button>
+      </div>
+      <div class="card">
         <div class="card-title" style="margin-bottom:10px;" data-i18n="resetTitle">Reset Student Password</div>
         <div class="card-sub" data-i18n="resetSub">Enter student email to reset their password.</div>
         <div class="form-group"><input class="form-input" type="email" id="inResetEmail" data-i18n-ph="phResetEmail"></div>
