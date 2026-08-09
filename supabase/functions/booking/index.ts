@@ -12,7 +12,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // ---- Config ----
-const ALLOWED_DOMAIN = "@lumut.ikm.edu.my"; // guard email institut
+const ALLOWED_DOMAIN = "@lumut.tvetmara.edu.my"; // guard email institut
 const DEFAULT_MIN_PASS = 6;
 
 const supabase = createClient(
