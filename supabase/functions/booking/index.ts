@@ -57,7 +57,6 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
   return (await derive(password, salt)) === hashHex;
 }
 
-const last4 = (s: string) => (s || "").replace(/\D/g, "").slice(-4);
 const cleanEmail = (s: string) => (s || "").trim().toLowerCase();
 
 // ============================================================
@@ -93,7 +92,7 @@ Deno.serve(async (req) => {
       }
 
       // --------------------------------------------------
-      // firstLogin — email + IC → set password sendiri
+      // firstLogin — email berdaftar → set password sendiri
       // --------------------------------------------------
       case "firstLogin": {
         const email = cleanEmail(body.email);
@@ -103,8 +102,6 @@ Deno.serve(async (req) => {
         if (!s) return json({ success: false, error: "Email tidak berdaftar." });
         if (s.password_hash !== null)
           return json({ success: false, error: "Akaun sudah ada kata laluan. Sila log masuk." });
-        if (last4(body.ic) !== last4(s.ic) || last4(body.ic).length < 4)
-          return json({ success: false, error: "4 digit IC tidak sepadan." });
         if (!body.newPassword || body.newPassword.length < DEFAULT_MIN_PASS)
           return json({ success: false, error: `Kata laluan minimum ${DEFAULT_MIN_PASS} aksara.` });
 
@@ -267,16 +264,13 @@ Deno.serve(async (req) => {
         const nama = (body.nama || "").trim();
         if (!nama) return json({ success: false, error: "Nama diperlukan." });
 
-        if (!body.password || body.password.length < DEFAULT_MIN_PASS)
-          return json({ success: false, error: `Kata laluan minimum ${DEFAULT_MIN_PASS} aksara.` });
-
         // matric & kursus diambil terus dari format email: <matric>.<kursus>@domain
         const [matric, kursus] = email.split("@")[0].split(".");
-        const password_hash = await hashPassword(body.password);
 
+        // password_hash dibiarkan NULL — pelajar set password sendiri masa first-login
         const { data, error } = await supabase
           .from("students")
-          .insert({ email, nama, ic: "", matric: matric || null, kursus: kursus || null, password_hash })
+          .insert({ email, nama, ic: "", matric: matric || null, kursus: kursus || null })
           .select()
           .single();
 
