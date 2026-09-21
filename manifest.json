@@ -3,7 +3,7 @@
   "short_name": "Court Booking",
   "description": "Sistem tempahan court sukan TVET MARA Lumut.",
   "lang": "ms-MY",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
