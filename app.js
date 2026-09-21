@@ -6,6 +6,7 @@
 /* ───────── [CONFIG] ───────── */
 const API_URL  = 'https://qwldwdywvxamlnaulmye.supabase.co/functions/v1/booking';
 const ADMIN_WA = '60195772706';
+let deferredInstallPrompt = null;
 
 const SLOTS = [
   { id: 1, type: 'petang', time: '5:00pm – 7:00pm' },
@@ -46,7 +47,7 @@ function slotLabel(id) { return SLOT_LABEL[lang][id]; }
 
 const LANG = {
   en: {
-    appName:'Court Booking', heroSub:'TVET MARA Lumut — students only',
+    appName:'TVET MARA Lumut · Court Booking', heroSub:'TVET MARA Lumut — students only',
     loginTitle:'Log in', loginSub:'Enter your student email to continue.',
     lblEmail:'Student email', phEmail:'2402080.dfd@lumut.tvetmara.edu.my',
     btnContinue:'Continue',
@@ -102,7 +103,7 @@ const LANG = {
     adminCancelConfirm:'Cancel this student\'s booking?'
   },
   ms: {
-    appName:'Tempahan Court', heroSub:'TVET MARA Lumut — khusus pelajar',
+    appName:'TVET MARA Lumut · Tempahan Court', heroSub:'TVET MARA Lumut — khusus pelajar',
     loginTitle:'Log masuk', loginSub:'Masukkan email pelajar anda untuk teruskan.',
     lblEmail:'Email pelajar', phEmail:'2402080.dfd@lumut.tvetmara.edu.my',
     btnContinue:'Teruskan',
@@ -208,6 +209,60 @@ function showAlert(elId, msg, type='danger') {
   setTimeout(() => { if (el) el.innerHTML = ''; }, 5000);
 }
 function clearAlert(elId) { const el = document.getElementById(elId); if (el) el.innerHTML = ''; }
+function openBookingModal(booking) {
+  const modal = document.getElementById('bookingModal');
+  if (!modal || !booking) return;
+  const status = booking.status === 'active' ? t('active') : t('cancelled');
+  const court = booking.courts?.name || 'Court';
+  const slot = slotLabelFromMs(booking.slots?.label_ms);
+  document.getElementById('modalTitle').textContent = `${court} — ${sportLabel(booking.sport)}`;
+  document.getElementById('modalStatus').textContent = status;
+  document.getElementById('modalStatus').className = `modal-status ${booking.status === 'active' ? 'is-active' : 'is-cancelled'}`;
+  document.getElementById('modalDetails').innerHTML = `
+    <div class="modal-detail"><span>${t('sumDate')}</span><strong>${booking.booking_date}</strong></div>
+    <div class="modal-detail"><span>${t('sumSlot')}</span><strong>${slot}</strong></div>
+    <div class="modal-detail"><span>${t('sumSport')}</span><strong>${sportLabel(booking.sport)}</strong></div>
+    <div class="modal-detail"><span>${t('sumEmail')}</span><strong>${currentEmail || ''}</strong></div>`;
+  document.getElementById('modalActions').innerHTML = booking.status === 'active'
+    ? `<button class="btn btn-danger" type="button" onclick="closeBookingModal();cancelMyBooking('${booking.id}')">${t('btnCancel')}</button>`
+    : '';
+  modal.hidden = false;
+  document.body.classList.add('modal-open');
+}
+function closeBookingModal() {
+  const modal = document.getElementById('bookingModal');
+  if (modal) modal.hidden = true;
+  document.body.classList.remove('modal-open');
+}
+
+function showInstallBanner() {
+  if (localStorage.getItem('installBannerDismissed') === '1') return;
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.hidden = false;
+}
+function dismissInstallBanner() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.hidden = true;
+  localStorage.setItem('installBannerDismissed', '1');
+}
+async function installPwa() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const result = await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  if (result.outcome === 'accepted') dismissInstallBanner();
+}
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  showInstallBanner();
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  dismissInstallBanner();
+});
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closeBookingModal(); });
+document.addEventListener('click', event => { if (event.target.id === 'bookingModal') closeBookingModal(); });
 function showScreen(id) {
   ['screenLogin','screenStudent','screenAdmin'].forEach(s => {
     const el = document.getElementById(s); if (el) el.classList.remove('active');
@@ -549,15 +604,15 @@ async function loadMyBookings() {
 function renderStudentHistory() {
   const el=document.getElementById('historyListEl'); if(!el) return;
   if(!studentBookings.length){ el.innerHTML=`<div class="empty-state"><p>${t('noBookings')}</p></div>`; return; }
-  el.innerHTML=studentBookings.map(b=>`
-    <div class="booking-item">
+  el.innerHTML=studentBookings.map((b, index)=>`
+    <div class="booking-item" role="button" tabindex="0" onclick="openBookingModal(studentBookings[${index}])" onkeydown="if(event.key==='Enter')openBookingModal(studentBookings[${index}])">
       <div class="booking-main">
         <div class="booking-court-label">${b.courts?.name||'Court'} — ${sportLabel(b.sport)}</div>
         <div class="booking-meta">${b.booking_date} &nbsp;•&nbsp; ${slotLabelFromMs(b.slots?.label_ms)}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <span class="badge badge-${b.status==='active'?'active':'cancelled'}">${b.status==='active'?t('active'):t('cancelled')}</span>
-        ${b.status==='active'?`<button class="btn-danger-sm" onclick="cancelMyBooking('${b.id}')">${t('btnCancel')}</button>`:''}
+        <span class="booking-view">View details</span>
       </div>
     </div>`).join('');
 }
@@ -691,4 +746,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('inAdminPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
   applyLang();
   renderSportSelection();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 });

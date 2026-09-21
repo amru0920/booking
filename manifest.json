@@ -1,0 +1,20 @@
+{
+  "name": "Court Booking TVET MARA Lumut",
+  "short_name": "Court Booking",
+  "description": "Sistem tempahan court sukan TVET MARA Lumut.",
+  "lang": "ms-MY",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#142B68",
+  "background_color": "#F4F6FB",
+  "icons": [
+    {
+      "src": "app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

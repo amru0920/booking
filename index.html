@@ -13,6 +13,15 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#142B68">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Court Booking">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="app-icon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
       <style>
     :root {
       --navy:   #1A2B6D;
@@ -501,6 +510,32 @@
     </div>
   </section>
 
+</div>
+
+<aside id="installBanner" class="install-banner" aria-label="Install Court Booking" hidden>
+  <div class="install-icon"><img src="app-icon.svg" alt="Court Booking"></div>
+  <div class="install-copy">
+    <strong>Install Court Booking</strong>
+    <span>Add to your phone Home Screen</span>
+  </div>
+  <button id="installButton" class="install-button" type="button" onclick="installPwa()">Install</button>
+  <button class="install-dismiss" type="button" onclick="dismissInstallBanner()" aria-label="Close install prompt">&times;</button>
+</aside>
+
+<div id="bookingModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="booking-modal">
+    <button class="modal-close" type="button" onclick="closeBookingModal()" aria-label="Close">&times;</button>
+    <div class="modal-kicker">TVET MARA LUMUT</div>
+    <div class="modal-title-row">
+      <div>
+        <h2 id="modalTitle">Booking details</h2>
+        <p id="modalStatus" class="modal-status"></p>
+      </div>
+      <div class="modal-mark">TM</div>
+    </div>
+    <div id="modalDetails" class="modal-details"></div>
+    <div id="modalActions" class="modal-actions"></div>
+  </div>
 </div>
 <script src="app.js"></script>
 </body>
